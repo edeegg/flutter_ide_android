@@ -25,13 +25,14 @@ class TerminalRemoteDataSourceImpl implements TerminalRemoteDataSource {
   @override
   Future<void> startTerminal(String workDir) async {
     _pty = Pty.start(
-      '/data/data/com.termux/files/usr/bin/bash',
+      'bash'
+     // '/data/data/com.termux/files/usr/bin/bash',
       arguments: [],
       environment: {
-        'HOME': '/data/data/com.termux/files/home',
-        'TERMUX_PREFIX': '/data/data/com.termux/files/usr',
-        'TERM': 'xterm-256color',
-        'PATH': '/data/data/com.termux/files/usr/bin',
+    //    'HOME': '/data/data/com.termux/files/home',
+      //  'TERMUX_PREFIX': '/data/data/com.termux/files/usr',
+    //    'TERM': 'xterm-256color',
+       // 'PATH': '/data/data/com.termux/files/usr/bin',
         // 'LD_PRELOAD': '/data/data/com.termux/files/usr/lib/libtermux-exec.so',
       },
       workingDirectory: workDir,
