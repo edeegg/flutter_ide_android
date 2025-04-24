@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../domain/entities/settings_entity.dart';
+import 'lib/features/domain/entities/settings_entity.dart';
 
 abstract class SettingsLocalDataSource {
   Future<SettingsEntity> getSettings();
