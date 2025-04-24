@@ -3,16 +3,20 @@ name: Build & Release
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write    # necessário para criar tags via API
+
 jobs:
   build:
-    name: Build & Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # precisa de histórico completo para encontrar tags
 
       - name: Set Up Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           distribution: 'oracle'
           java-version: '17'
@@ -29,14 +33,23 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      # STEP: Bump automático de versão
+      - name: Bump version and create tag
+        id: bump
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INITIAL_VERSION: '0.0.1'   # versão inicial quando não há tags :contentReference[oaicite:0]{index=0}
+          DEFAULT_BUMP: 'patch'      # bump padrão: patch (0.0.1 → 0.0.2) :contentReference[oaicite:1]{index=1}
+          WITH_V: 'false'            # omitindo o "v" no prefixo da tag :contentReference[oaicite:2]{index=2}
+
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
+          tag_name: ${{ steps.bump.outputs.new_tag }}         # usa a tag criada
+          release_name: Release ${{ steps.bump.outputs.new_tag }}
           draft: false
           prerelease: false
 
