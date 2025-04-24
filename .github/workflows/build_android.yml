@@ -5,16 +5,16 @@ on:
 
 jobs:
   build:
-    name: Build APKs (Release + Debug)
+    name: Build & Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+      - name: Set Up Java
+        uses: actions/setup-java@v3.12.0
         with:
-          distribution: 'temurin'
+          distribution: 'oracle'
           java-version: '17'
 
       - name: Set Up Flutter
@@ -26,26 +26,10 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # Build Release
-      - name: Build APK Release
+      - name: Build APK
         run: flutter build apk --release
-      - name: Archive Release APK
-        run: |
-          mkdir -p artifacts
-          cp build/app/outputs/flutter-apk/app-release.apk artifacts/app-release.apk
 
-      # Build Debug
-      - name: Build APK Debug
-        run: flutter build apk --debug
-      - name: Archive Debug APK
-        run: |
-          mkdir -p artifacts
-          cp build/app/outputs/flutter-apk/app-debug.apk artifacts/app-debug.apk
-
-      - name: List Artifacts
-        run: ls -l artifacts
-
-      - name: Create Release on GitHub
+      - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -56,23 +40,12 @@ jobs:
           draft: false
           prerelease: false
 
-      # Upload both APKs
-      - name: Upload Release APK to Release
+      - name: Upload APK to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/app-release.apk
+          asset_path: build/app/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Upload Debug APK to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/app-debug.apk
-          asset_name: app-debug.apk
           asset_content_type: application/vnd.android.package-archive
