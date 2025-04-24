@@ -4,27 +4,28 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write    # necessário para criar tags e releases via API
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0        # busca todas as tags e histórico :contentReference[oaicite:3]{index=3}
 
       - name: Set Up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'oracle'
+          distribution: 'oracle'  # JDK Oracle 17 instalado no runner :contentReference[oaicite:4]{index=4}
           java-version: '17'
 
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.3'
+          flutter-version: '3.22.3'  # versão estável do Flutter :contentReference[oaicite:5]{index=5}
           channel: 'stable'
 
       - name: Install Dependencies
@@ -38,12 +39,13 @@ jobs:
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INITIAL_VERSION: '0.0.1'
-          DEFAULT_BUMP: 'patch'
-          WITH_V: 'false'
+          INITIAL_VERSION: '0.0.1'    # versão inicial quando não há tags :contentReference[oaicite:6]{index=6}
+          DEFAULT_BUMP: 'patch'       # bump de patch (0.0.1 → 0.0.2…) :contentReference[oaicite:7]{index=7}
+          WITH_V: 'false'             # remove prefixo "v" na tag :contentReference[oaicite:8]{index=8}
+          GIT_API_TAGGING: 'false'    # força git push ao criar tag :contentReference[oaicite:9]{index=9}
 
       - name: Create Release
-        id: create_release            # ← ID adicionado aqui
+        id: create_release         # expõe outputs.upload_url :contentReference[oaicite:10]{index=10}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +60,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}   # ← e aqui
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+            # obrigatório para apontar ao release correto :contentReference[oaicite:11]{index=11}
           asset_path: build/app/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
