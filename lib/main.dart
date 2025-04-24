@@ -28,6 +28,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<TerminalProvider>(
           create: (_) => di.sl<TerminalProvider>(),
         ),
+
+        ChangeNotifierProvider(
+          create: (_) => di.sl<ThemeSettingsProvider>()
+        ), 
+        ChangeNotifierProvider(
+          create: (_) => di.sl<EditorSettingsProvider>()
+        ), 
+        ChangeNotifierProvider(
+          create: (_) => di.sl<CompileSettingsProvider>()
+         ), 
       ],
       child: DynamicColorBuilder(
           builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
