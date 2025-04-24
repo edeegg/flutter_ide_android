@@ -25,7 +25,7 @@ class TerminalRemoteDataSourceImpl implements TerminalRemoteDataSource {
   @override
   Future<void> startTerminal(String workDir) async {
     _pty = Pty.start(
-      'bash'
+      'bash',
      // '/data/data/com.termux/files/usr/bin/bash',
       arguments: [],
       environment: {
