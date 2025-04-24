@@ -5,7 +5,7 @@ import '../../domain/usecases/get_settings.dart';
 import '../../domain/usecases/update_setting.dart';
 import '../../domain/entities/settings_entity.dart';
 
-class CompileSettingsRepository extends ChangeNotifier {
+class CompileSettingsProvider extends ChangeNotifier {
   final GetSettings _getSettings;
   final UpdateSetting _updateSetting;
 
@@ -13,7 +13,7 @@ class CompileSettingsRepository extends ChangeNotifier {
   CompileMode mode = CompileMode.debug;
   CompileArch arch = CompileArch.arm;
 
-  CompileSettingsRepository(this._getSettings, this._updateSetting) {
+  CompileSettingsProvider(this._getSettings, this._updateSetting) {
     load();
   }
 

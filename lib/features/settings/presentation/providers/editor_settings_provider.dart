@@ -4,7 +4,7 @@ import '../../domain/entities/settings_entity.dart';
 import '../../domain/usecases/get_settings.dart';
 import '../../domain/usecases/update_setting.dart';
 
-class EditorSettingsRepository extends ChangeNotifier {
+class EditorSettingsProvider extends ChangeNotifier {
   final GetSettings _getSettings;
   final UpdateSetting _updateSetting;
 
@@ -22,7 +22,7 @@ class EditorSettingsRepository extends ChangeNotifier {
   String fontFamily = 'Roboto';
   bool autoSave = false;
 
-  EditorSettingsRepository(this._getSettings, this._updateSetting) {
+  EditorSettingsProvider(this._getSettings, this._updateSetting) {
     load();
   }
 
