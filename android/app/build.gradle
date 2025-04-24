@@ -33,7 +33,6 @@ if (flutterVersionName == null) {
 android {
     namespace = "com.example.flutter_ide_android"
     compileSdk = 34//project.properties.compileSdkVersion.toInteger()
-    compileSdk = 35 //project.properties.compileSdkVersion.toInteger()
     ndkVersion = project.properties.ndkVersion//24//flutter.ndkVersion
 
     compileOptions {
