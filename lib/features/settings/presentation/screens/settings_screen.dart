@@ -11,9 +11,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   
   final Map<String, Widget> _optionWidgets = {
-    'Geral': const GeralWidget(),
-    'Editor': const EditorWidget(),
-    'Terminal': const TerminalWidget(),
+    'Geral': const ThemeSettingsWidget(),
+    'Editor': const EditorSettingsWidget(),
+    'Terminal': const EditorSettingsWidget(),
   };
 
   @override
