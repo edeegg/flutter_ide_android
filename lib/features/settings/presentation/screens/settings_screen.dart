@@ -13,17 +13,7 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            /*    ElevatedButton.icon(
-              icon: const Icon(Icons.code),
-              label: const Text('Editor de Código'),
-              onPressed: () => Navigator.pushNamed(context, '/editor'),
-            ),
-            const SizedBox(height: 16), */
-            ElevatedButton.icon(
-              icon: const Icon(Icons.terminal),
-              label: const Text('Terminal'),
-              onPressed: () => Navigator.pushNamed(context, '/terminal'),
-            ),
+         
           ],
         ),
       ),
