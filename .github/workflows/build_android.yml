@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write    # necessário para criar tags via API
+  contents: write
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # precisa de histórico completo para encontrar tags
+          fetch-depth: 0
 
       - name: Set Up Java
         uses: actions/setup-java@v3
@@ -33,22 +33,22 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      # STEP: Bump automático de versão
       - name: Bump version and create tag
         id: bump
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INITIAL_VERSION: '0.0.1'   # versão inicial quando não há tags :contentReference[oaicite:0]{index=0}
-          DEFAULT_BUMP: 'patch'      # bump padrão: patch (0.0.1 → 0.0.2) :contentReference[oaicite:1]{index=1}
-          WITH_V: 'false'            # omitindo o "v" no prefixo da tag :contentReference[oaicite:2]{index=2}
+          INITIAL_VERSION: '0.0.1'
+          DEFAULT_BUMP: 'patch'
+          WITH_V: 'false'
 
       - name: Create Release
+        id: create_release            # ← ID adicionado aqui
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.bump.outputs.new_tag }}         # usa a tag criada
+          tag_name: ${{ steps.bump.outputs.new_tag }}
           release_name: Release ${{ steps.bump.outputs.new_tag }}
           draft: false
           prerelease: false
@@ -58,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}   # ← e aqui
           asset_path: build/app/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
