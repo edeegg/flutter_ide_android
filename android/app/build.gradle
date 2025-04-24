@@ -32,7 +32,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.flutter_ide_android"
-    compileSdk = 34//project.properties.compileSdkVersion.toInteger()
+    compileSdk = project.properties.compileSdkVersion.toInteger()
     ndkVersion = project.properties.ndkVersion//24//flutter.ndkVersion
 
     compileOptions {
@@ -48,7 +48,7 @@ android {
         minSdk = project.properties.minSdkVersion.toInteger()
         targetSdk = project.properties.targetSdkVersion.toInteger()
         minSdk = 31
-        targetSdk = 35 //project.properties.targetSdkVersion.toInteger()
+        targetSdk = project.properties.targetSdkVersion.toInteger()
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
         externalNativeBuild {
