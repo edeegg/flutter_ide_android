@@ -3,65 +3,49 @@ name: Build & Release
 on:
   workflow_dispatch:
 
+
 permissions:
   contents: write    # necessário para criar tags e releases via API
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0        # busca todas as tags e histórico :contentReference[oaicite:3]{index=3}
+      - uses: actions/checkout@v4
 
-      - name: Set Up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'oracle'  # JDK Oracle 17 instalado no runner :contentReference[oaicite:4]{index=4}
-          java-version: '17'
-
-      - name: Set Up Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.3'  # versão estável do Flutter :contentReference[oaicite:5]{index=5}
+          flutter-version: '3.19.0'
           channel: 'stable'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+      # Removido: etapa Decode Keystore File
 
-      - name: Bump version and create tag
-        id: bump
-        uses: anothrNick/github-tag-action@v1
+      - name: Decode .env
+        run: echo "${{ secrets.FLUTTER_ENV }}" > ${{ github.workspace }}/.env
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INITIAL_VERSION: '0.0.1'    # versão inicial quando não há tags :contentReference[oaicite:6]{index=6}
-          DEFAULT_BUMP: 'patch'       # bump de patch (0.0.1 → 0.0.2…) :contentReference[oaicite:7]{index=7}
-          WITH_V: 'false'             # remove prefixo "v" na tag :contentReference[oaicite:8]{index=8}
-          GIT_API_TAGGING: 'false'    # força git push ao criar tag :contentReference[oaicite:9]{index=9}
+          FLUTTER_ENV: ${{ secrets.FLUTTER_ENV }}
 
-      - name: Create Release
-        id: create_release         # expõe outputs.upload_url :contentReference[oaicite:10]{index=10}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build APK (debug)
+        run: flutter build apk --dart-define-from-file=.env --debug
+        # Nenhuma variável de keystore necessária
+
+      - name: Build AppBundle (unsigned)
+        run: flutter build appbundle --debug
+        # Para gerar AAB sem assinatura RL, usamos o modo debug (que não exige keystore)
+
+      - name: Upload Artifact
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ steps.bump.outputs.new_tag }}
-          release_name: Release ${{ steps.bump.outputs.new_tag }}
-          draft: false
-          prerelease: false
-
-      - name: Upload APK to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  
-            # obrigatório para apontar ao release correto :contentReference[oaicite:11]{index=11}
-          asset_path: build/app/outputs/apk/release/app-release.apk
-          asset_name: app-release.apk
-          asset_content_type: application/vnd.android.package-archive
+          artifacts: |
+            ${{ github.workspace }}/build/app/outputs/flutter-apk/*.apk
+            ${{ github.workspace }}/build/app/outputs/bundle/*.aab
+          allowUpdates: true
+          makeLatest: true
+          omitBodyDuringUpdate: true
